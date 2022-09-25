@@ -2,6 +2,7 @@ package com.coolweather.android;
 
 import androidx.fragment.app.Fragment;
 import android.app.ProgressDialog;
+import android.content.Intent;
 import android.os.Bundle;
 import android.os.SystemClock;
 import android.util.Log;
@@ -81,6 +82,12 @@ public class ChooseAreaFragment extends Fragment {
                 } else if (currentLevel == LEVEL_CITY) {
                     selectedCity = cityList.get(position);
                     queryCounties();
+                }else if(currentLevel == LEVEL_COUNTY){
+                    String weatherId = countyList.get(position).getWeatherId();
+                    Intent intent = new Intent(getActivity(),WeatherActivity.class);
+                    intent.putExtra("weather_id",weatherId);
+                    startActivity(intent);
+                    getActivity().finish();
                 }
             }
 
@@ -106,7 +113,7 @@ public class ChooseAreaFragment extends Fragment {
         if(provinceList.size() > 0){
             dataList.clear();
             for(Province province : provinceList){
-                dataList.add(province.getProviceName());
+                dataList.add(province.getProvinceName());
             }
             adapter.notifyDataSetChanged();
             listView.setSelection(0);
@@ -119,10 +126,8 @@ public class ChooseAreaFragment extends Fragment {
 
 
     private void queryCities(){
-        titleText.setText(selectedProvince.getProviceName());
+        titleText.setText(selectedProvince.getProvinceName());
         backButton.setVisibility(View.VISIBLE);
-        String msg = selectedProvince.getId()+"";
-        Log.i("lllllllllllll",msg);
         cityList = DataSupport.where("provinceid = ?",String.valueOf(selectedProvince.getId())).find(City.class);
         if(cityList.size() > 0){
             dataList.clear();
